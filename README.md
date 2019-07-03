@@ -1,4 +1,4 @@
-# notificator-ui
+# broadcast-ui
 
 ## Project setup
 ```

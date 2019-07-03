@@ -26,5 +26,13 @@ export default {
     removeAllItemsFromArr(arr) {
       arr.splice(1, arr.length);
     },
+    notifySnackBar(message, color, time = 2000, active = true) {
+      this.$store.dispatch('globalChangeNotifySnackBar', {
+        color,
+        active,
+        message,
+        duration: time,
+      });
+    },
   },
 };
