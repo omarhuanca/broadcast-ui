@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-layout row wrap>
-    <v-flex xs8>
       <v-form>
         <v-container grid-list-md>
           <v-layout column wrap>
@@ -32,6 +31,7 @@
 </template>
 
 <script>
+
 export default {
   name: 'MessageForm',
   props: {
@@ -44,17 +44,20 @@ export default {
       required: true,
     },
   },
-  data() {
-    return {
-    };
-  },
   methods: {
-    initialData() {
-      this.model.active = 1;
+    validateData() {
+      let response = false;
+      console.log('validateData validate', JSON.stringify(this.model.validate()));
+      if (this.model.validate()) {
+        return this.model.save().then(() => {
+          response = true;
+        });
+      }
+      return response;
     },
-  },
-  beforeMount() {
-    this.initialData();
+    setSnackBar(message, color) {
+      this.notifySnackBar(message, color);
+    },
   },
 };
 </script>

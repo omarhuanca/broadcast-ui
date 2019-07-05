@@ -11,12 +11,14 @@ export default class MessageModel extends Model {
       title: '',
       body: '',
       active: 0,
-      classMessage: [],
+      classMessage: null,
     };
   }
   mutations() {
     return {
       id: id => Number(id) || null,
+      title: title => title.toString().trim(),
+      body: String || '',
     };
   }
   validation() {
@@ -25,6 +27,14 @@ export default class MessageModel extends Model {
       body: required.format(this.requiredValidationMessage).and(string).and(length(0, 160).format(this.dataLongValidationMessage)),
       active: required.format(this.requiredValidationMessage),
       classMessage: required.format(this.requiredValidationMessage),
+      /*
+      classMessage: (value) => {
+        if (this.classMessage){
+          return true;
+        }
+        return this.requiredValidationMessage;
+      },
+      */
     }
   }
   routes() {

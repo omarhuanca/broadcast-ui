@@ -1,7 +1,7 @@
 // actions
 const actions = {
-  messageFormChangeData({ commit }, newData) {
-    commit('setData', newData);
+  messageFormChangeModel({ commit }, newModel) {
+    commit('setModel', newModel);
   },
   messageFormChangeClassMessage({ commit }, newClassMessage) {
     commit('setClassMessage', newClassMessage);
@@ -10,8 +10,8 @@ const actions = {
 
 // mutations
 const mutations = {
-  setData(state, newData) {
-    state.model = newData;
+  setModel(state, newModel) {
+    state.model = newModel;
   },
   setClassMessage(state, newClassMessage) {
     state.classMessage = newClassMessage;

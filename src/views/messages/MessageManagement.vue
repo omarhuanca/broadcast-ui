@@ -10,12 +10,12 @@
         </template>
         <v-card>
           <v-card-title>
-            <span class="headline"> </span>
+            <span class="headline">{{ formTitle }} </span>
           </v-card-title>
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
-                <message-form :classMessage="classMessage" :model="model" ref="messageForm">
+                <message-form ref="messageForm" :classMessage="classMessage" :model="model">
                 </message-form>
               </v-layout>
             </v-container>
@@ -23,12 +23,12 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="blue darken-1" flat @click="close">Cancel</v-btn>
-            <v-btn color="blue darken-1" flat @click="save">Save</v-btn>
+            <v-btn color="blue darken-1" flat @click="sendRequest">Save</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
       </v-toolbar>
-      <v-data-table :headers="headers" :items="desserts" class="elevation-1">
+      <v-data-table :headers="headers" :items="updateItem" class="elevation-1">
       <template v-slot:items="props">
         <td class="text-xs-left">{{ props.item.title }}</td>
         <td class="justify-center layout px-0">
@@ -82,6 +82,15 @@ export default {
       editedItem: {},
     };
   },
+  computed: {
+    updateItem: function changeDessets() {
+      this.getMessage();
+      return this.desserts;
+    },
+    formTitle() {
+      return this.editedIndex === -1 ? 'New Item' : 'Edit Item';
+    },
+  },
   methods: {
     initialData() {
       this.model = new MessageModel();
@@ -102,20 +111,28 @@ export default {
         this.editedIndex = -1;
       }, 300);
     },
-    save() {
-      let response = false;
-      if (this.model.validate()) {
-        return this.model.save().then(() => {
-          response = true;
-        });
-      }
+    sendRequest() {
+      this.$refs.messageForm.validateData();
       this.close();
-      return response;
     },
     editItem(item) {
+      console.log('this.model', JSON.stringify(this.model));
+      console.log('message', JSON.stringify(item));
+      const message = new MessageModel({
+        id: item.id,
+        title: item.title,
+        body: item.body,
+        active: item.active,
+        classMessage: item.classMessage,
+      });
+      this.$store.dispatch('messageFormChangeModel', message);
       this.editedIndex = this.desserts.indexOf(item);
-      this.editedItem = Object.assign({}, item);
       this.dialog = true;
+    },
+    newItem() {
+      this.model = new MessageModel();
+      this.editedIndex = -1;
+      this.$store.dispatch('messageFormChangeModel', this.model);
     },
   },
   async beforeMount() {
