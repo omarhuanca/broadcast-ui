@@ -15,7 +15,7 @@
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
-                <message-form ref="messageForm" :classMessage="classMessage" :model="model">
+                <message-form ref="messageForm" :classMessage="classMessage">
                 </message-form>
               </v-layout>
             </v-container>
@@ -60,7 +60,6 @@ export default {
   data() {
     return {
       axios: this.Axios || localAxios,
-      model: null,
       classMessage: [],
       dialog: false,
       headers: [
@@ -84,7 +83,7 @@ export default {
   },
   computed: {
     updateItem: function changeDessets() {
-      this.getMessage();
+      // this.getMessage();
       return this.desserts;
     },
     formTitle() {
@@ -93,7 +92,7 @@ export default {
   },
   methods: {
     initialData() {
-      this.model = new MessageModel();
+      this.$store.dispatch('messageFormChangeModel', new MessageModel({ id: null }));
     },
     getClassMessage() {
       return this.axios.get('v1/classMessages/all').then((classMessage) => {
@@ -116,8 +115,6 @@ export default {
       this.close();
     },
     editItem(item) {
-      console.log('this.model', JSON.stringify(this.model));
-      console.log('message', JSON.stringify(item));
       const message = new MessageModel({
         id: item.id,
         title: item.title,
@@ -130,9 +127,8 @@ export default {
       this.dialog = true;
     },
     newItem() {
-      this.model = new MessageModel();
       this.editedIndex = -1;
-      this.$store.dispatch('messageFormChangeModel', this.model);
+      this.$store.dispatch('messageFormChangeModel', new MessageModel());
     },
   },
   async beforeMount() {

@@ -17,8 +17,8 @@ export default class MessageModel extends Model {
   mutations() {
     return {
       id: id => Number(id) || null,
-      title: title => title.toString().trim(),
-      body: String || '',
+      title: String,
+      body: String,
     };
   }
   validation() {
@@ -27,20 +27,12 @@ export default class MessageModel extends Model {
       body: required.format(this.requiredValidationMessage).and(string).and(length(0, 160).format(this.dataLongValidationMessage)),
       active: required.format(this.requiredValidationMessage),
       classMessage: required.format(this.requiredValidationMessage),
-      /*
-      classMessage: (value) => {
-        if (this.classMessage){
-          return true;
-        }
-        return this.requiredValidationMessage;
-      },
-      */
     }
   }
   routes() {
     return {
       save: 'v1/messages/save',
-      patch: 'v1/messages/update/{messageId}'
+      patch: 'v1/messages/update'
     };
   }
 }

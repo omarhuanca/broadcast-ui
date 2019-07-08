@@ -31,27 +31,41 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import localAxios from 'axios';
 
 export default {
   name: 'MessageForm',
+  inject: {
+    Axios: { default: null },
+  },
   props: {
     classMessage: {
       type: Array,
       required: true,
     },
-    model: {
-      type: Object,
-      required: true,
-    },
+  },
+  data() {
+    return {
+      axios: this.Axios || localAxios,
+    };
+  },
+  computed: {
+    ...mapState({
+      model: state => state.messageForm.model,
+    }),
   },
   methods: {
     validateData() {
       let response = false;
-      console.log('validateData validate', JSON.stringify(this.model.validate()));
       if (this.model.validate()) {
-        return this.model.save().then(() => {
-          response = true;
-        });
+        if (this.model.id === null) {
+          response = this.model.save().then(() => {
+          });
+        } else {
+          return this.axios.patch(`http://localhost:9091/v1/messages/update/${this.model.id}`, this.model).then(() => {
+          });
+        }
       }
       return response;
     },
