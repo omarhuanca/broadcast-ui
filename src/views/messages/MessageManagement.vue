@@ -83,7 +83,7 @@ export default {
   },
   computed: {
     updateItem: function changeDessets() {
-      // this.getMessage();
+      this.getMessage();
       return this.desserts;
     },
     formTitle() {

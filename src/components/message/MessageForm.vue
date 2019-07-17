@@ -63,7 +63,7 @@ export default {
           response = this.model.save().then(() => {
           });
         } else {
-          return this.axios.patch(`http://localhost:9091/v1/messages/update/${this.model.id}`, this.model).then(() => {
+          response = this.axios.put(`v1/messages/update/${this.model.id}`, this.model).then(() => {
           });
         }
       }

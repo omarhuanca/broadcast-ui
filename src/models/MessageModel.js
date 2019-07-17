@@ -29,10 +29,16 @@ export default class MessageModel extends Model {
       classMessage: required.format(this.requiredValidationMessage),
     }
   }
+  options() {
+    return {
+      identifier: 'id',
+      patch: true,
+    };
+  }
   routes() {
     return {
       save: 'v1/messages/save',
-      patch: 'v1/messages/update'
+      patch: 'v1/messages/update/{id}'
     };
   }
 }
