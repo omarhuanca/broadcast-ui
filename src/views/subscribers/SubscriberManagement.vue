@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-toolbar flat color="white">
-      <v-toolbar-title>Manage Message</v-toolbar-title>
+      <v-toolbar-title>Manage Subscriber</v-toolbar-title>
       <v-divider class="mx-2" inset vertical></v-divider>
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="1000px">
@@ -15,8 +15,8 @@
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
-                <message-form ref="messageForm" :classMessage="classMessage">
-                </message-form>
+                <subscriber-form ref="subscriberForm">
+                </subscriber-form>
               </v-layout>
             </v-container>
           </v-card-text>
@@ -30,7 +30,10 @@
       </v-toolbar>
       <v-data-table :headers="headers" :items="updateItem" class="elevation-1">
       <template v-slot:items="props">
-        <td class="text-xs-left">{{ props.item.title }}</td>
+        <td class="text-xs-left">{{ props.item.firstName }}</td>
+        <td class="text-xs-left">{{ props.item.lastName }}</td>
+        <td class="text-xs-left">{{ props.item.email }}</td>
+        <td class="text-xs-left">{{ props.item.cellphone }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item)">
             edit
@@ -49,13 +52,13 @@
 
 <script>
 import localAxios from 'axios';
-import MessageForm from '@/components/message/MessageForm';
-import MessageModel from '@/models/MessageModel';
+import SubscriberForm from '@/components/subscriber/SubscriberForm';
+import SubscriberModel from '@/models/SubscriberModel';
 
 export default {
-  name: 'MessageManagement',
+  name: 'SubscriberManagement',
   components: {
-    MessageForm,
+    SubscriberForm,
   },
   inject: {
     Axios: { default: null },
@@ -63,20 +66,31 @@ export default {
   data() {
     return {
       axios: this.Axios || localAxios,
-      classMessage: [],
       dialog: false,
       headers: [
         {
-          text: 'Title',
+          text: 'First Name',
           align: 'left',
-          sortable: false,
-          value: 'title',
+          sortable: true,
+          value: 'firstName',
         },
         {
-          text: 'Actions',
-          align: 'center',
+          text: 'Last Name',
+          align: 'left',
+          sortable: true,
+          value: 'lastName',
+        },
+        {
+          text: 'Email',
+          align: 'left',
           sortable: false,
-          value: 'name',
+          value: 'email',
+        },
+        {
+          text: 'Cellphone',
+          align: 'left',
+          sortable: false,
+          value: 'cellphone',
         },
       ],
       items: [],
@@ -85,7 +99,7 @@ export default {
   },
   computed: {
     updateItem: function changeDessets() {
-      this.getMessage();
+      this.getSubscriber();
       return this.items;
     },
     formTitle() {
@@ -94,16 +108,11 @@ export default {
   },
   methods: {
     initialData() {
-      this.$store.dispatch('messageFormChangeModel', new MessageModel({ id: null, active: 1 }));
+      this.$store.dispatch('subscriberFormChangeModel', new SubscriberModel({ id: null, active: 1 }));
     },
-    getClassMessage() {
-      return this.axios.get('v1/classMessages/all').then((classMessage) => {
-        this.classMessage = classMessage.data;
-      });
-    },
-    getMessage() {
-      return this.axios.get('v1/messages/all').then((Message) => {
-        this.items = Message.data;
+    getSubscriber() {
+      return this.axios.get('v1/subscribers/all').then((Subscriber) => {
+        this.items = Subscriber.data;
       });
     },
     close() {
@@ -113,53 +122,55 @@ export default {
       }, 300);
     },
     sendRequest() {
-      this.$refs.messageForm.validateData();
+      this.$refs.subscriberForm.validateData();
       this.close();
     },
     editItem(item) {
-      const message = new MessageModel({
+      const subscriber = new SubscriberModel({
         id: item.id,
-        title: item.title,
-        body: item.body,
+        firstName: item.firstName,
+        lastName: item.lastName,
+        email: (item.email) ? item.email : '',
+        cellphone: (item.cellphone) ? item.cellphone : '',
         active: item.active,
-        classMessage: item.classMessage,
       });
-      this.$store.dispatch('messageFormChangeModel', message);
+      this.$store.dispatch('subscriberFormChangeModel', subscriber);
       this.editedIndex = this.items.indexOf(item);
       this.dialog = true;
     },
     archiveItem(item) {
-      const message = new MessageModel({
+      const subscriber = new SubscriberModel({
         id: item.id,
-        title: item.title,
-        body: item.body,
-        active: 0,
-        classMessage: item.classMessage,
+        firstName: item.firstName,
+        lastName: item.lastName,
+        email: item.email,
+        cellphone: item.cellphone,
+        active: item.active,
       });
-      this.$store.dispatch('messageFormChangeModel', message);
+      this.$store.dispatch('subscriberFormChangeModel', subscriber);
       this.editedIndex = this.items.indexOf(item);
-      this.$refs.messageForm.validateData();
+      this.$refs.categoryForm.validateData();
     },
     unarchiveItem(item) {
-      const message = new MessageModel({
+      const subscriber = new SubscriberModel({
         id: item.id,
-        title: item.title,
-        body: item.body,
+        firstName: item.nameCategory,
+        lastName: item.lastName,
+        email: item.email,
+        cellphone: item.cellphone,
         active: 1,
-        classMessage: item.classMessage,
       });
-      this.$store.dispatch('messageFormChangeModel', message);
+      this.$store.dispatch('subscriberFormChangeModel', subscriber);
       this.editedIndex = this.items.indexOf(item);
-      this.$refs.messageForm.validateData();
+      this.$refs.subscriberForm.validateData();
     },
     newItem() {
       this.editedIndex = -1;
-      this.$store.dispatch('messageFormChangeModel', new MessageModel({ id: null, active: 1 }));
+      this.$store.dispatch('subscriberFormChangeModel', new SubscriberModel({ id: null, active: 1 }));
     },
   },
   async beforeMount() {
-    this.getClassMessage();
-    this.getMessage();
+    this.getSubscriber();
     await this.initialData();
   },
 };

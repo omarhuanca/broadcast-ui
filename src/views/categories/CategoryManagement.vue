@@ -1,7 +1,7 @@
 <template>
   <div>
     <v-toolbar flat color="white">
-      <v-toolbar-title>Manage Message</v-toolbar-title>
+      <v-toolbar-title>Manage Category</v-toolbar-title>
       <v-divider class="mx-2" inset vertical></v-divider>
       <v-spacer></v-spacer>
       <v-dialog v-model="dialog" max-width="1000px">
@@ -15,8 +15,8 @@
           <v-card-text>
             <v-container grid-list-md>
               <v-layout wrap>
-                <message-form ref="messageForm" :classMessage="classMessage">
-                </message-form>
+                <category-form ref="categoryForm">
+                </category-form>
               </v-layout>
             </v-container>
           </v-card-text>
@@ -30,7 +30,7 @@
       </v-toolbar>
       <v-data-table :headers="headers" :items="updateItem" class="elevation-1">
       <template v-slot:items="props">
-        <td class="text-xs-left">{{ props.item.title }}</td>
+        <td class="text-xs-left">{{ props.item.nameCategory }}</td>
         <td class="justify-center layout px-0">
           <v-icon small class="mr-2" @click="editItem(props.item)">
             edit
@@ -49,13 +49,13 @@
 
 <script>
 import localAxios from 'axios';
-import MessageForm from '@/components/message/MessageForm';
-import MessageModel from '@/models/MessageModel';
+import CategoryForm from '@/components/category/CategoryForm';
+import CategoryModel from '@/models/CategoryModel';
 
 export default {
-  name: 'MessageManagement',
+  name: 'CategoryManagement',
   components: {
-    MessageForm,
+    CategoryForm,
   },
   inject: {
     Axios: { default: null },
@@ -63,20 +63,13 @@ export default {
   data() {
     return {
       axios: this.Axios || localAxios,
-      classMessage: [],
       dialog: false,
       headers: [
         {
-          text: 'Title',
+          text: 'Name Category',
           align: 'left',
-          sortable: false,
-          value: 'title',
-        },
-        {
-          text: 'Actions',
-          align: 'center',
-          sortable: false,
-          value: 'name',
+          sortable: true,
+          value: 'nameCategory',
         },
       ],
       items: [],
@@ -85,7 +78,7 @@ export default {
   },
   computed: {
     updateItem: function changeDessets() {
-      this.getMessage();
+      this.getCategory();
       return this.items;
     },
     formTitle() {
@@ -94,16 +87,11 @@ export default {
   },
   methods: {
     initialData() {
-      this.$store.dispatch('messageFormChangeModel', new MessageModel({ id: null, active: 1 }));
+      this.$store.dispatch('categoryFormChangeModel', new CategoryModel({ id: null, active: 1 }));
     },
-    getClassMessage() {
-      return this.axios.get('v1/classMessages/all').then((classMessage) => {
-        this.classMessage = classMessage.data;
-      });
-    },
-    getMessage() {
-      return this.axios.get('v1/messages/all').then((Message) => {
-        this.items = Message.data;
+    getCategory() {
+      return this.axios.get('v1/categories/all').then((Category) => {
+        this.items = Category.data;
       });
     },
     close() {
@@ -113,53 +101,46 @@ export default {
       }, 300);
     },
     sendRequest() {
-      this.$refs.messageForm.validateData();
+      this.$refs.categoryForm.validateData();
       this.close();
     },
     editItem(item) {
-      const message = new MessageModel({
+      const category = new CategoryModel({
         id: item.id,
-        title: item.title,
-        body: item.body,
+        nameCategory: item.nameCategory,
         active: item.active,
-        classMessage: item.classMessage,
       });
-      this.$store.dispatch('messageFormChangeModel', message);
+      this.$store.dispatch('classChannelFormChangeModel', category);
       this.editedIndex = this.items.indexOf(item);
       this.dialog = true;
     },
     archiveItem(item) {
-      const message = new MessageModel({
+      const category = new CategoryModel({
         id: item.id,
-        title: item.title,
-        body: item.body,
+        nameCategory: item.nameCategory,
         active: 0,
-        classMessage: item.classMessage,
       });
-      this.$store.dispatch('messageFormChangeModel', message);
+      this.$store.dispatch('categoryFormChangeModel', category);
       this.editedIndex = this.items.indexOf(item);
-      this.$refs.messageForm.validateData();
+      this.$refs.categoryForm.validateData();
     },
     unarchiveItem(item) {
-      const message = new MessageModel({
+      const category = new CategoryModel({
         id: item.id,
-        title: item.title,
-        body: item.body,
+        nameCategory: item.nameCategory,
         active: 1,
-        classMessage: item.classMessage,
       });
-      this.$store.dispatch('messageFormChangeModel', message);
+      this.$store.dispatch('categoryFormChangeModel', category);
       this.editedIndex = this.items.indexOf(item);
-      this.$refs.messageForm.validateData();
+      this.$refs.categoryForm.validateData();
     },
     newItem() {
       this.editedIndex = -1;
-      this.$store.dispatch('messageFormChangeModel', new MessageModel({ id: null, active: 1 }));
+      this.$store.dispatch('categoryFormChangeModel', new CategoryModel({ id: null, active: 1 }));
     },
   },
   async beforeMount() {
-    this.getClassMessage();
-    this.getMessage();
+    this.getCategory();
     await this.initialData();
   },
 };

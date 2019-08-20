@@ -2,6 +2,10 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import Home from './views/Home';
 import MessageManagement from './views/messages/MessageManagement';
+import CategoryManagement from './views/categories/CategoryManagement';
+import ClassChannelManagement from './views/classChannels/ClassChannelManagement';
+import SubscriberManagement from './views/subscribers/SubscriberManagement';
+import ClassMessageManagement from './views/classMessages/ClassMessageManagement';
 
 Vue.use(Router);
 
@@ -24,6 +28,26 @@ export default new Router({
       path: '/messagemanagement',
       name: 'messagemanagement',
       component: MessageManagement,
+    },
+    {
+      path: '/categorymanagement',
+      name: 'categorymanagement',
+      component: CategoryManagement,
+    },
+    {
+      path: '/classchannelmanagement',
+      name: 'classchannelmanagement',
+      component: ClassChannelManagement,
+    },
+    {
+      path: '/subscribermanagement',
+      name: 'subscribermanagement',
+      component: SubscriberManagement,
+    },
+    {
+      path: '/classmessagemanagement',
+      name: 'classmessagemanagement',
+      component: ClassMessageManagement,
     },
   ],
 });

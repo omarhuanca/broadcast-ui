@@ -5,6 +5,10 @@
     <v-content>
       <router-view/>
     </v-content>
+    <v-footer>
+        <div> © {{ getDate }} UTI Humanidades </div>
+        <div> omar.huanca.balboa@gmail.com </div>
+    </v-footer>
   </v-app>
 </template>
 
@@ -15,6 +19,11 @@ export default {
   name: 'App',
   components: {
     MenuForm,
+  },
+  computed: {
+    getDate() {
+      return new Date().getFullYear();
+    },
   },
 };
 </script>
